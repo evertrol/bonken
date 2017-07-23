@@ -489,6 +489,17 @@ function startNewGame(): void {
 	(<HTMLInputElement>curGame.querySelector('[data-id="play"]')).disabled = false;
 }
 
+
+function updateScoringTableHeader(players) {
+	for (let i = 0; i < players.length; i++) {
+		let sel = 'table[data-id="score-card"] thead th.player' + (i+1);
+		let th = <HTMLElement>curGame.querySelector(sel);
+		th.innerText = players[i];
+	}
+
+}
+
+
 function play(): void {
 	let startingPlayers = curGame.getElementsByClassName("starting-player");
 	let checked: number[] = [];
@@ -537,6 +548,8 @@ function play(): void {
 			span.innerText = players[(iplayer+3)%4];
 		}
 	}
+
+	updateScoringTableHeader(players)
 
 	section.setAttribute("class", "");
 	let header = section.querySelector('h1');
