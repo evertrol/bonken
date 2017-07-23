@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bonken scores</title>
+<link rel="stylesheet" type="text/css" href="bonken-scores.css">
+<script src="bonken-scores.js"></script>
+</head>
+<body>
+<section id="main">
+<nav>
+<ul>
+<li>Home</li>
+<li>New Game</li>
+</ul>
+</nav>
+
+<h1>Bonken</h1>
+<p>Bonken is a collection of fun little card games for four persons, which are combined to form a final score. The calculation of the score of each mini-game and of the overall score, however, is not the simplest. This web-app makes life easier by calculating the score for you. It also keeps track of whose turn it is to shuffle, deal, pick a mini-game, and who is bidding against who.
+</p>
+
+<p>For details on the rules of the game (and its score calculation), see <a href="https://staff.fnwi.uva.nl/m.h.m.heemskerk/">somewhere on the internet</a>.</p>
+
+<p>Some notes about this web-app:</p>
+<ul>
+<li>This page contains everything needed: you don't need to be online to calculate the scores.</li>
+<li>Reloading the page, or using the (brower's) back button, will erase any scores stored on this page. You can, however, safely navigate on this page using the page's menu.</li>
+<!-- <li>If you store <em>a lot</em> of scores on the page, you may want to delete some scores; particularly if you find the page becoming slow. You can selectively remove scores, or all in one go.</li> -->
+</ul>
+
+<section id="new-game">
+<h1>New game</h1>
+
+<p class="hidden"><label for="game-name">Optional game name</label><input type="text" id="game-name" placeholder="&lt;current date and time&gt;"></p>
+<input type="button" value="Start a new game" id="new-game-button" onclick="startNewGame()">
+
+</section>
+
+<section id="saved-games" class="hidden">
+<h1>Saved games</h1>
+
+</section>
+</section> <!-- main -->
+
+<section id="start-new-game" class="hidden">
+
+<h1 class="player-names" data-id="player-names">Enter the players' names</h1>
+
+<p>Note: you can always change the names later.</p>
+<p>Use clockwise order.</p>
+<p>Tick the checkbox to indicate which player has the <em>seven of spades</em>; this player will start.
+<table>
+<thead><tr><th></th><th>Name</th><th>&spades;7</th></tr></thead>
+<tbody>
+<tr><td><label>Player 1</label></td><td><input type="text" class="player-name" data-player="1" placeholder="Player 1"></td><td><input type="checkbox" class="starting-player"></td></tr>
+<tr><td><label>Player 2</label></td><td><input type="text" class="player-name" data-player="2" placeholder="Player 2"></td><td><input type="checkbox" class="starting-player"></td></tr>
+<tr><td><label>Player 3</label></td><td><input type="text" class="player-name" data-player="3" placeholder="Player 3"></td><td><input type="checkbox" class="starting-player"></td></tr>
+<tr><td><label>Player 4</label></td><td><input type="text" class="player-name" data-player="4" placeholder="Player 4"></td><td><input type="checkbox" class="starting-player"></td></tr>
+</table>
+
+<input type="button" data-id="play" value="Play!" onclick="play()">
+
+<section class="hidden">
+
+<section data-id="score-card">
+
+<h1 data-id="score-card">Score card</h1>
+
+<p><span class="shuffle-player">No one</span> shuffles &amp; deals.<br>
+It is <span class="current-player">no one</span>'s turn to choose.
+Select the mini-game to play by selecting the link in the table below.<br>
+<span class="bidding-player">No one</span> starts the bidding.<br>
+<span class="leading-player">No one</span> leads.</p>
+
+<table data-id="score-card">
+<colgroup span="2">
+<colgroup>
+<colgroup>
+<colgroup>
+<colgroup>
+<colgroup>
+<colgroup>
+<colgroup>
+<thead>
+<tr>
+<th>Game</th>
+<th>Points</th>
+<th></th>
+<th class="player1" scope="colgroup">Player 1</th>
+<th class="player2" scope="colgroup">Player 2</th>
+<th class="player3" scope="colgroup">Player 3</th>
+<th class="player4" scope="colgroup">Player 4</th>
+<th></th>
+<th>Played by</th>
+</tr>
+</thead>
+<tbody>
+<tr><th colspan="12" scope="colgroup">Minus games</th></tr>
+<tr class="hearts" data-game="hearts">
+<th><a href="#">Hearts</a></th>
+<td>-10</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="kings-or-jacks" data-game="kings-or-jacks">
+<th><a href="#">Kings or Jacks</a></th>
+<td>-25</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="king-of-hearts" data-game="king-of-hearts">
+<th><a href="#">King of hearts</a></th>
+<td>-100</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="queens" data-game="queens">
+<th><a href="#">Queens</a></th>
+<td>-45</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="dominoes" data-game="dominoes">
+<th><a href="#">Dominoes</a></th>
+<td>-100</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="duck" data-game="duck">
+<th><a href="#">Duck</a></th>
+<td>-10</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="seven-thirteen" data-game="seven-thirteen">
+<th><a href="#">Seven / Thirteen</a></th>
+<td>-50</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="last-trick" data-game="last-trick">
+<th><a href="#">Last trick</a></th>
+<td>-100</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+</tbody>
+<tbody>
+<tr><th colspan="12" scope="colgroup">Plus games</th></tr>
+<tr class="trump-spades" data-game="trump-spades">
+<th><a href="#">Trump spades</a></th>
+<td>+20</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="trump-hearts" data-game="trump-hearts">
+<th><a href="#">Trump hearts</a></th>
+<td>+20</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="trump-diamonds" data-game="trump-diamonds">
+<th><a href="#">Trump diamonds</a></th>
+<td>+20</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="trump-clubs" data-game="trump-clubs">
+<th><a href="#">Trump clubs</a></th>
+<td>+20</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="no-trump" data-game="no-trump">
+<th><a href="#">No trump</a></th>
+<td>+20</td>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="played-by"></td>
+</tr>
+<tr class="total" data-row="total">
+<th colspan="2">Total</th>
+<td></td>
+<td class="player1"></td>
+<td class="player2"></td>
+<td class="player3"></td>
+<td class="player4"></td>
+<td></td>
+<td class="player-ahead"></td>
+</tr>
+	
+</tbody>
+</table>
+
+</section>
+
+<section class="mini-game hidden" data-id="mini-game">
+<h1>Mini game</h1>
+<section class="bidding">
+<h1>Bidding</h1>
+
+
+<p><span class="shuffle-player">No one</span> has dealt the cards.<br>
+<span class="current-player">No one</span> has chosen.<br>
+<span class="bidding-player">No one</span> starts the bidding, then proceed counterclockwise.</br>
+<span class="leading-player">No one</span> leads.</p>
+<!-- <p>You can either click or tap the player that the current person is bidding against, or use shortcut keys: '1', '2', '3' or '4' (if valid), or 'a' for a bid against all players. You can undo a bid by selecting it again.</p> -->
+
+<table class="bidding"  data-id="bidding">
+<thead>
+<tr><th></th><th colspan="4">versus</th></tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+</section>  <!-- bidding -->
+
+<section class="results hidden" data-id="results">
+<h1>Fill out the results</h1>
+
+<section class="hearts hidden" data-game="hearts">
+<h1>Fill out the number of hearts for each player</h1>
+<p>(Leave blank for zero.)</p>
+<table>
+<thead>
+<tr><th>Name</th><th>Points of hearts</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="kings-or-jacks hidden" data-game="kings-or-jacks">
+<h1>Fill out the number of kings and jacks for each player</h1>
+<p>(Leave blank for zero.)</p>
+<table>
+<thead>
+<tr><th>Name</th><th>Number of kings &amp; jacks</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="king-of-hearts hidden" data-game="king-of-hearts">
+<h1>Indicate which player ended up with the king of hearts</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>King of hearts</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="checkbox" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="checkbox" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="checkbox" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="checkbox" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+
+<section class="queens hidden" data-game="queens">
+<h1>Fill out the number of queens for each player</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>Number of queens</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+
+<section class="dominoes hidden" data-game="dominoes">
+<h1>Indicate who played the last card</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>Last card</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="checkbox" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="checkbox" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="checkbox" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="checkbox" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+
+<section class="duck hidden" data-game="duck">
+<h1>Fill out the number of tricks for each player</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>Number of tricks</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+
+<section class="seven-thirteen hidden" data-game="seven-thirteen">
+<h1>Indicate who got the 7th and 13th trick</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>7th trick</th><th>13th (last) trick</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="checkbox" data-playerid="1"><td><input type="checkbox" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="checkbox" data-playerid="2"><td><input type="checkbox" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="checkbox" data-playerid="3"><td><input type="checkbox" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="checkbox" data-playerid="4"><td><input type="checkbox" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+
+<section class="last-trick hidden" data-game="last-trick">
+<h1>Indicate who received the last trick</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>Last trick</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="checkbox" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="checkbox" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="checkbox" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="checkbox" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+
+<section class="trump-spades hidden" data-game="trump-spades">
+<h1>Fill out the number of tricks for each player</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>Number of tricks</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+
+<section class="trump-hearts hidden" data-game="trump-hearts">
+<h1>Fill out the number of tricks for each player</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>Number of tricks</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+
+<section class="trump-diamonds hidden" data-game="trump-diamonds">
+<h1>Fill out the number of tricks for each player</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>Number of tricks</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+
+<section class="trump-clubs hidden" data-game="trump-clubs">
+<h1>Fill out the number of tricks for each player</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>Number of tricks</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+
+<section class="no-trump hidden" data-game="no-trump">
+<h1>Fill out the number of tricks for each player</h1>
+<table>
+<thead>
+<tr><th>Name</th><th>Number of tricks</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+</tbody>
+</table>
+</section>
+
+<input type="button" value="Done! Pick next game" data-id="next" disabled="disabled">
+
+</section> <!-- results >
+</section> <!-- play >
+</section> <!-- new-mini-game >
+</section> <!-- start-new-game >
+
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+.hidden {
+	display: none;
+}
+
+th {
+	text-align: left;
+}
+
+td, th {
+	border: 1px solid black;
+}
+
+h1:first-letter {
+    text-transform: capitalize;
+}
+
+table.bidding {
+	margin-bottom: 2em;
+}
