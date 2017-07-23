@@ -268,6 +268,8 @@ function addBiddingRow(name, tbody, j) {
 function startMiniGame(name) {
 	inMiniGame = true;
 
+	let cancel = <HTMLInputElement>curGame.querySelector('input[name="cancel"]');
+	cancel.onclick = function() { cancelGame(name); };
 	let input = <HTMLInputElement>curGame.querySelector('input[data-id="next"]');
 	input.disabled = true;
 	input.onclick = function() {
@@ -371,7 +373,7 @@ function updateScoreCard(name) {
 }
 
 
-function nextMiniGame(oldName) {
+function nextMiniGame(oldName: string, cancelled?: boolean) {
 	gamesPlayed.push(oldName);
 	curGame.querySelector('[data-id="mini-game"]').setAttribute('class', 'hidden');
 	curGame.querySelector('section[data-id="results"]').setAttribute('class', 'hidden');
@@ -382,8 +384,10 @@ function nextMiniGame(oldName) {
 		table.deleteRow(0);
 	}
 
-	iplayer += 1;
-	iplayer %= 4;
+	if (!cancelled) {
+		iplayer += 1;
+		iplayer %= 4;
+	}
 
 	let spans = curGame.querySelectorAll('span');
 	for (let i = 0; i < spans.length; i++) {
@@ -412,6 +416,21 @@ function nextMiniGame(oldName) {
 
 }
 
+
+
+function cancelGame(name) {
+	/*
+	let result = confirm("Cancel the current game?", ['yes', 'no']);
+	if (result == 0) {
+
+	}
+	*/
+	let result = window.confirm("Stop the current game?");
+	if (result) {
+		inMiniGame = false;
+		nextMiniGame(name, true);
+	}
+}
 
 function setMiniGameLinks() {
 	let table = curGame.querySelector('table[data-id="score-card"]');
