@@ -56,7 +56,7 @@ function updateScore(name, scores) {
 		td.innerText = scores[i];
 	}
 
-	
+
 }
 
 
@@ -267,7 +267,7 @@ function addBiddingRow(name, tbody, j) {
 
 function startMiniGame(name) {
 	inMiniGame = true;
-	
+
 	let input = <HTMLInputElement>curGame.querySelector('input[data-id="next"]');
 	input.disabled = true;
 	input.onclick = function() {
@@ -356,12 +356,12 @@ function updateScoreCard(name) {
 	let title = (nGames == 12) ? "Winner" : "Ahead";
 	title = title + ": " + players[imax];
 	(<HTMLElement>tr.querySelector('td.player-ahead')).innerText = title;
-	
+
 	let selector = 'table[data-id="score-card"] tr[data-game="' + name + '"]';
 	let row = curGame.querySelector(selector);
 	(<HTMLElement>row.querySelector('td.played-by')).innerText = players[iplayer];
 	//(<HTMLElement>row.querySelector('td.completed')).innerHTML = "&#x2713";
-	
+
 	let link = <HTMLElement>row.querySelector('a');
 	let text = link.innerText;
 	link.parentElement.innerText = text;
@@ -374,13 +374,13 @@ function nextMiniGame(oldName) {
 	gamesPlayed.push(oldName);
 	curGame.querySelector('[data-id="mini-game"]').setAttribute('class', 'hidden');
 	curGame.querySelector('section[data-id="results"]').setAttribute('class', 'hidden');
-	curGame.querySelector('section[data-game="'+oldName+'"]').setAttribute('class', 'hidden');	
+	curGame.querySelector('section[data-game="'+oldName+'"]').setAttribute('class', 'hidden');
 
 	let table = <HTMLTableElement>curGame.querySelector('table[data-id="bidding"]');
 	while (table.rows.length > 0) {
 		table.deleteRow(0);
 	}
-	
+
 	iplayer += 1;
 	iplayer %= 4;
 
@@ -405,14 +405,14 @@ function nextMiniGame(oldName) {
 			span.innerText = players[(iplayer+3)%4];
 		}
 	}
-	
+
 	let header = curGame.querySelector('h1[data-id="score-card"]');
 	header.scrollIntoView(true);
-	
+
 }
 
 
-function setMiniGameLinks() {	
+function setMiniGameLinks() {
 	let table = curGame.querySelector('table[data-id="score-card"]');
 	for (let name of gameNames) {
 		let selector = "tr." + name + " a";
@@ -476,7 +476,7 @@ function startNewGame(): void {
 		let input = inputs[i];
 		input.addEventListener('input', function(event) {
 			let curinput = <HTMLInputElement>(event.target);
-			let j = parseInt(curinput.dataset.player) - 1; //getAttribute("data-player")) - 1;
+			let j = parseInt(curinput.dataset.player) - 1;
 			players[j] = curinput.value;
 		});
 	}
@@ -543,7 +543,7 @@ function play(): void {
 	header.scrollIntoView(true);
 
 	(<HTMLInputElement>curGame.querySelector('[data-id="play"]')).disabled = true;
-		
+
 	setPlayerNames();
 	setMiniGameLinks();
 }
