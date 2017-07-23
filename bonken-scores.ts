@@ -353,9 +353,10 @@ function updateScoreCard(name) {
 			imax = i;
 		}
 	}
-	let title = (nGames == 12) ? "Winner" : "Ahead";
-	title = title + ": " + players[imax];
-	(<HTMLElement>tr.querySelector('td.player-ahead')).innerText = title;
+	if (nGames == 12) {
+		(<HTMLElement>tr.querySelector('th')).innerText = "Total / winner"
+	}
+	(<HTMLElement>tr.querySelector('td.player-ahead')).innerText = players[imax];
 
 	let selector = 'table[data-id="score-card"] tr[data-game="' + name + '"]';
 	let row = curGame.querySelector(selector);
