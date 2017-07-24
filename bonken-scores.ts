@@ -476,6 +476,36 @@ function setPlayerNames() {
 }
 
 
+function checkStartingPlayer() {
+	let checkboxs = curGame.getElementsByClassName("starting-player");
+	let checked: number[] = [];
+	for (let i = 0; i < checkboxs.length; i++) {
+		if ((<HTMLInputElement>checkboxs[i]).checked) {
+			checked.push(i);
+		}
+	}
+
+	if (checked.length == 1) {
+		(<HTMLInputElement>curGame.querySelector('[data-id="play"]')).disabled = false;
+	} else {
+		(<HTMLInputElement>curGame.querySelector('[data-id="play"]')).disabled = true;
+	}
+
+	if (checked.length == 0) {
+		alert("No starting player selected");
+		let input = <HTMLElement>curGame.getElementsByClassName("player-name")[0];
+		input.focus();
+		return ;
+	}
+	if (checked.length > 1) {
+		alert("To many starting players selected");
+		let input = <HTMLElement>curGame.getElementsByClassName("player-name")[0];
+		input.focus();
+		return ;
+	}
+}
+
+
 function startNewGame(): void {
     let elem = <HTMLInputElement>document.getElementById("game-name");
     gameName = elem.value;
@@ -500,13 +530,17 @@ function startNewGame(): void {
 			players[j] = curinput.value;
 		});
 	}
+	let checkboxes = curGame.getElementsByClassName("starting-player");
+	for (let i = 0; i < checkboxes.length; i++) {
+		let checkbox = <HTMLInputElement>checkboxes[i];
+		checkbox.onclick = checkStartingPlayer;
+	}
+
 	let header = <HTMLElement>newNode.getElementsByClassName("player-names")[0];
 	header.scrollIntoView(true);
 
 	let input = <HTMLElement>newNode.getElementsByClassName("player-name")[0];
 	input.focus();
-
-	(<HTMLInputElement>curGame.querySelector('[data-id="play"]')).disabled = false;
 }
 
 
