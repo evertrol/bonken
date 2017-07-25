@@ -46,17 +46,12 @@ var totalPoints = new Map();
 
 
 function updateScore(name, scores) {
-	console.log('scores =', scores);
-
 	let selector = 'section[data-game="' + name + '"] tbody tr';
 	let trs = curGame.querySelectorAll(selector);
-	console.log(selector, trs);
 	for (let i = 0; i < scores.length; i++) {
 		let td = <HTMLElement>trs[i].querySelector('td:last-child');
 		td.innerText = scores[i];
 	}
-
-
 }
 
 
@@ -134,7 +129,6 @@ function nextGame() {
 
 
 function calcScore(name) {
-	console.log("Calculating scores");
 	let selector = 'section[data-game="'+name+'"] table input';
 	let inputs = Array.from(curGame.querySelectorAll(selector));
 	let sum = 0;
@@ -160,11 +154,8 @@ function calcScore(name) {
 			}
 		}
 	}
-	console.log(sum, name, sums.get(name));
 	if (sum == sums.get(name)) {
-		console.log('full sum; values =', values);
 		let scores = calcGeneric(values, name);
-		console.log(scores);
 		updateScore(name, scores);
 		totalPoints.set(name, scores);
 		(<HTMLInputElement>curGame.querySelector('input[data-id="next"]')).disabled = false;
