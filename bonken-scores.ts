@@ -201,8 +201,6 @@ function addBiddingRow(name, tbody, j) {
 	th.appendChild(content);
 	tr.appendChild(th);
 
-	let focused = false;
-	let focusedInput: HTMLInputElement;
 	for (let i = 0; i < 4; i++) {
 		var td = document.createElement("td");
 		let input: any = document.createElement("input");
@@ -210,9 +208,6 @@ function addBiddingRow(name, tbody, j) {
 		input.setAttribute('type', 'checkbox');
 		if (i == j) {
 			input = document.createTextNode("X");
-		} else if (!focused) {
-			focusedInput = input;
-			focused = true;
 		}
 		td.appendChild(input);
 		tr.appendChild(td);
@@ -249,6 +244,9 @@ function addBiddingRow(name, tbody, j) {
 	td.appendChild(input);
 	tr.appendChild(td);
 	tbody.append(tr);
+
+	// current player can only bid against those who bid against them
+	// Turn off all disallowed options
 	if (j == 3) {
 		for (let i = 0; i < 3; i++) {
 			let ii = (i+1+iplayer)%4;
@@ -260,6 +258,7 @@ function addBiddingRow(name, tbody, j) {
 			}
 		}
 	}
+	let focusedInput = <HTMLInputElement>tr.querySelector('input');
 	focusedInput.focus();
 
 }
