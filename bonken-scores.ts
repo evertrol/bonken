@@ -154,6 +154,9 @@ function calcScore(name) {
 			}
 		}
 	}
+
+	(<HTMLInputElement>curGame.querySelector('input[data-id="next"]')).disabled = true;
+	updateScore(name, ['', '', '', '']);
 	if (sum == sums.get(name)) {
 		let scores = calcGeneric(values, name);
 		updateScore(name, scores);
