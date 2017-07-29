@@ -397,13 +397,21 @@ function cancelGame(name) {
 
 function testTrumpPlayed(name) {
 	let names = ['trump-spades', 'trump-hearts', 'trump-diamonds', 'trump-clubs', 'no-trump'];
+	let played = gamesPlayed[iplayer];
 	if (!names.includes(name)) {
-		return false;
+		if (played.length >= 2) {
+			for (let trumpname of names) {
+				if (played.includes(trumpname)) {
+					return false;
+				}
+			}
+			alert(players[iplayer] + " has to play a plus game")
+			return true;
+		}
 	} else {
-		let played = gamesPlayed[iplayer];
-		for (let name of names) {
-			if (played.includes(name)) {
-				alert(players[iplayer] + ' has already played a trump game');
+		for (let trumpname of names) {
+			if (played.includes(trumpname)) {
+				alert(players[iplayer] + ' has already played a plus game');
 				return true;
 			}
 		}
