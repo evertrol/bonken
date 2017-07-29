@@ -53,13 +53,13 @@
 <table>
 <thead><tr><th></th><th>Name</th><th>&spades;7</th></tr></thead>
 <tbody>
-<tr><td><label>Player 1</label></td><td><input type="text" class="player-name" data-player="1" placeholder="Player 1"></td><td><input type="checkbox" class="starting-player"></td></tr>
-<tr><td><label>Player 2</label></td><td><input type="text" class="player-name" data-player="2" placeholder="Player 2"></td><td><input type="checkbox" class="starting-player"></td></tr>
-<tr><td><label>Player 3</label></td><td><input type="text" class="player-name" data-player="3" placeholder="Player 3"></td><td><input type="checkbox" class="starting-player"></td></tr>
-<tr><td><label>Player 4</label></td><td><input type="text" class="player-name" data-player="4" placeholder="Player 4"></td><td><input type="checkbox" class="starting-player"></td></tr>
+<tr><td><label>Player 1</label></td><td><input type="text" class="player-name" data-player="1" placeholder="Player 1" oninput="updatePlayerName(this);"></td><td><input type="checkbox" class="starting-player"></td></tr>
+<tr><td><label>Player 2</label></td><td><input type="text" class="player-name" data-player="2" placeholder="Player 2" oninput="updatePlayerName(this);"></td><td><input type="checkbox" class="starting-player"></td></tr>
+<tr><td><label>Player 3</label></td><td><input type="text" class="player-name" data-player="3" placeholder="Player 3" oninput="updatePlayerName(this);"></td><td><input type="checkbox" class="starting-player"></td></tr>
+<tr><td><label>Player 4</label></td><td><input type="text" class="player-name" data-player="4" placeholder="Player 4" oninput="updatePlayerName(this);"></td><td><input type="checkbox" class="starting-player"></td></tr>
 </table>
 
-<input type="button" data-id="play" value="Play!" onclick="play()" disabled="disabled">
+<input type="button" data-id="play" value="Play!" onclick="play();" disabled="disabled">
 
 <section class="hidden">
 

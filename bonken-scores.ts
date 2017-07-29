@@ -45,6 +45,30 @@ const mults = new Map([['hearts', -10],
 var totalPoints = new Map();
 
 
+function updatePlayerName(input) {
+	let i = input.dataset.player - 1;
+	players[i] = input.value;
+	if (players[i] == '') {
+		players[i] = 'Player ' + (i+1);
+	}
+	setPlayerOrder(players);
+	updateScoringTableNames(players);
+	updateBiddingTableNames(players);
+	updateScoreTableNames(players);
+}
+
+
+function updateScoreTableNames(players) {
+	for (let i = 0; i < players.length; i++) {
+		let ths = curGame.querySelectorAll('tr.player'+(i+1)+' th');
+		for (let j = 0; j < ths.length; j++) {
+			let th = <HTMLElement>ths[j];
+			th.innerText = players[i];
+		}
+	}
+}
+
+
 function updateScore(name, scores) {
 	let selector = 'section[data-game="' + name + '"] tbody tr';
 	let trs = curGame.querySelectorAll(selector);
@@ -160,6 +184,21 @@ function doneBidding(tbody, name) {
 	section.scrollIntoView(true);
 
 }
+
+function updateBiddingTableNames(players) {
+	let table = curGame.querySelector('table[data-id="bidding"]');
+	let ths = table.querySelectorAll('thead tr:nth-child(2) th');
+	for (let i = 1; i < ths.length; i++) {
+		let th = <HTMLElement>ths[i];
+		th.innerText = players[(iplayer+i)%4];
+	}
+	ths = table.querySelectorAll('tbody tr th');
+	for (let i = 0; i < ths.length; i++) {
+		let th = <HTMLElement>ths[i];
+		th.innerText = players[(iplayer+i+1)%4];
+	}
+}
+
 
 function addBiddingRow(name, tbody, j) {
 	var tr = document.createElement("tr");
@@ -324,11 +363,15 @@ function updateScoreCard(name) {
 	if (nGames == 12) {
 		(<HTMLElement>tr.querySelector('th')).innerText = "Total / winner"
 	}
-	(<HTMLElement>tr.querySelector('td.player-ahead')).innerText = players[imax];
+	let td = <HTMLElement>tr.querySelector('td.player-ahead');
+	td.innerText = players[imax];
+	td.dataset.playerid = String(imax);
 
 	let selector = 'table[data-id="score-card"] tr[data-game="' + name + '"]';
 	let row = curGame.querySelector(selector);
-	(<HTMLElement>row.querySelector('td.played-by')).innerText = players[iplayer];
+	td = <HTMLElement>row.querySelector('td.played-by');
+	td.dataset.playerid = String(iplayer);
+	td.innerText = players[iplayer];
 	//(<HTMLElement>row.querySelector('td.completed')).innerHTML = "&#x2713";
 
 	let link = <HTMLElement>row.querySelector('a');
@@ -355,6 +398,14 @@ function nextMiniGame(oldName: string, cancelled?: boolean) {
 		iplayer %= 4;
 	}
 
+	setPlayerOrder(players);
+
+	let header = curGame.querySelector('h1[data-id="score-card"]');
+	header.scrollIntoView(true);
+}
+
+
+function setPlayerOrder(players) {
 	let spans = curGame.querySelectorAll('span');
 	for (let i = 0; i < spans.length; i++) {
 		let span = spans[i];
@@ -367,7 +418,7 @@ function nextMiniGame(oldName: string, cancelled?: boolean) {
 		}
 		if (cls == "shuffle-player") {
 			if (nGames == 0) {
-				span.innerText = "Martin";
+				span.innerText = "Someone";
 			} else {
 				span.innerText = players[(iplayer+2)%4];
 			}
@@ -376,12 +427,7 @@ function nextMiniGame(oldName: string, cancelled?: boolean) {
 			span.innerText = players[(iplayer+3)%4];
 		}
 	}
-
-	let header = curGame.querySelector('h1[data-id="score-card"]');
-	header.scrollIntoView(true);
-
 }
-
 
 
 function cancelGame(name) {
@@ -520,15 +566,6 @@ function startNewGame(): void {
 	newNode.setAttribute("class", "");
 	document.body.appendChild(newNode);
 
-	let inputs = newNode.getElementsByClassName("player-name");
-	for (let i = 0; i < inputs.length; i++) {
-		let input = inputs[i];
-		input.addEventListener('change', function(event) {
-			let curinput = <HTMLInputElement>(event.target);
-			let j = parseInt(curinput.dataset.player) - 1;
-			players[j] = curinput.value;
-		});
-	}
 	let checkboxes = curGame.getElementsByClassName("starting-player");
 	for (let i = 0; i < checkboxes.length; i++) {
 		let checkbox = <HTMLInputElement>checkboxes[i];
@@ -549,7 +586,24 @@ function updateScoringTableHeader(players) {
 		let th = <HTMLElement>curGame.querySelector(sel);
 		th.innerText = players[i];
 	}
+}
 
+
+function updateScoringTableNames(players) {
+	updateScoringTableHeader(players);
+	let tds = curGame.querySelectorAll('table[data-id="score-card"] td.played-by');
+	for (let i = 0; i < tds.length; i++) {
+		let td = <HTMLElement>tds[i];
+		let id = td.dataset.playerid;
+		if (id) {
+			td.innerText = players[id];
+		}
+	}
+	let td = <HTMLElement>curGame.querySelector('table[data-id="score-card"] td.player-ahead');
+	let id = td.dataset.playerid;
+	if (id) {
+		td.innerText = players[id];
+	}
 }
 
 
@@ -580,28 +634,7 @@ function play(): void {
 	let elem = node.querySelector('[value="Play!"]');
 	let section = elem.nextElementSibling;
 
-	let spans = curGame.querySelectorAll('span');
-	for (let i = 0; i < spans.length; i++) {
-		let span = spans[i];
-		let cls = span.getAttribute("class");
-		if (cls == "current-player") {
-			span.innerText = players[iplayer];
-		}
-		if (cls == "bidding-player") {
-			span.innerText = players[(iplayer+1)%4];
-		}
-		if (cls == "shuffle-player") {
-			if (nGames == 0) {
-				span.innerText = "Martin";
-			} else {
-				span.innerText = players[(iplayer+2)%4];
-			}
-		}
-		if (cls == "leading-player") {
-			span.innerText = players[(iplayer+3)%4];
-		}
-	}
-
+	setPlayerOrder(players);
 	updateScoringTableHeader(players)
 
 	section.setAttribute("class", "");
