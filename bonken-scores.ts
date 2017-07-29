@@ -86,45 +86,13 @@ function calcGeneric(values, name) {
 			let score2 = values[j];
 			let bidsum = bids[i][j] + bids[j][i];
 			let diff = (score1 - score2) * bidsum;
-			console.log(i, j, score1, score2, score1-score2, bidsum, diff);
 			score += diff;
 		}
-		console.log(i, values[i], score);
 		points = mult * score;
 		scores[i] = points;
 		// totalPoints.get(name)[i] = points;
 	}
-	console.log('scores:', scores);
 	return scores;
-}
-
-
-/*
-function calcHearts(values) {
-	let mult = -10;
-	totalPoints.set('hearts', [0, 0, 0, 0]);
-	for (let i = 0; i < 4; i++) {
-		let points = 0;
-		for (let j = 0; j < 4; j++) {
-			if (i == j) {
-				continue;
-			}
-			let score1 = values[i];
-			let score2 = values[j];
-			let bidsum = bids[i][j] + bids[j][i];
-			let diff = (score1 - score2) * bidsum;
-			points += (score1 + diff) * mult;
-		}
-		totalPoints.get('hearts')[i] = points;
-	}
-	console.log(totalPoints.get('hearts'));
-	console.log(totalPoints);
-}
-*/
-
-
-function nextGame() {
-
 }
 
 
@@ -157,6 +125,7 @@ function calcScore(name) {
 
 	(<HTMLInputElement>curGame.querySelector('input[data-id="next"]')).disabled = true;
 	updateScore(name, ['', '', '', '']);
+
 	if (sum == sums.get(name)) {
 		let scores = calcGeneric(values, name);
 		updateScore(name, scores);
