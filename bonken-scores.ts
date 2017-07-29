@@ -96,7 +96,7 @@ function calcGeneric(values, name) {
 }
 
 
-function calcScore(name) {
+function calcScore(name, showAlert=true) {
 	let selector = 'section[data-game="'+name+'"] table input';
 	let inputs = Array.from(curGame.querySelectorAll(selector));
 	let sum = 0;
@@ -114,7 +114,9 @@ function calcScore(name) {
 			if (input.value != "") {
     			let n = parseInt(input.value);
     			if (isNaN(i)) {
-    				alert("input is not a number");
+					if (showAlert) {
+    					alert("input is not a number");
+					}
     			} else {
     				sum += n;
 					values[i] = n;
@@ -132,7 +134,9 @@ function calcScore(name) {
 		totalPoints.set(name, scores);
 		(<HTMLInputElement>curGame.querySelector('input[data-id="next"]')).disabled = false;
 	} else if (sum > sums.get(name)) {
-		alert('too many tricks');
+		if (showAlert) {
+			alert('too many tricks');
+		}
 	}
 }
 
@@ -445,7 +449,12 @@ function setMiniGameLinks() {
 		selector = 'section[data-game="'+name+'"] table input';
 		let inputs = Array.from(curGame.querySelectorAll(selector));
 		for (let input of inputs) {
+			let inputType = input.getAttribute('type');
 			input.addEventListener('change', function(event) { calcScore(name) });
+			if (input.getAttribute('type') == 'text') {
+				// update score while typing; just don't show an alert
+				input.addEventListener('input', function(event) { calcScore(name, false) });
+			}
 		}
 	}
 
