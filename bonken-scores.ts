@@ -7,7 +7,7 @@ let biddingPlayerSpan: HTMLElement;
 //let miniGame: string = "";
 let nGames = 0;
 let inMiniGame = false;
-let gamesPlayed: string[] = [];
+let gamesPlayed: string[][] = [[], [], [], []];
 
 
 let bids: number[][] = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
@@ -336,7 +336,7 @@ function updateScoreCard(name) {
 
 
 function nextMiniGame(oldName: string, cancelled?: boolean) {
-	gamesPlayed.push(oldName);
+	gamesPlayed[iplayer].push(oldName);
 	curGame.querySelector('[data-id="mini-game"]').setAttribute('class', 'hidden');
 	curGame.querySelector('section[data-id="results"]').setAttribute('class', 'hidden');
 	curGame.querySelector('section[data-game="'+oldName+'"]').setAttribute('class', 'hidden');
@@ -394,6 +394,23 @@ function cancelGame(name) {
 	}
 }
 
+
+function testTrumpPlayed(name) {
+	let names = ['trump-spades', 'trump-hearts', 'trump-diamonds', 'trump-clubs', 'no-trump'];
+	if (!names.includes(name)) {
+		return false;
+	} else {
+		let played = gamesPlayed[iplayer];
+		for (let name of names) {
+			if (played.includes(name)) {
+				alert(players[iplayer] + ' has already played a trump game');
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 function setMiniGameLinks() {
 	let table = curGame.querySelector('table[data-id="score-card"]');
 	for (let name of gameNames) {
@@ -401,6 +418,9 @@ function setMiniGameLinks() {
 		let link = <HTMLElement>table.querySelector(selector);
 		link.onclick = function() {
 			if (inMiniGame) {
+				return false;
+			}
+			if (testTrumpPlayed(name)) {
 				return false;
 			}
 			let section = <HTMLElement>curGame.querySelector('[data-id="mini-game"]');
