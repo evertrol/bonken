@@ -417,7 +417,7 @@ function setMiniGameLinks() {
 		selector = 'section[data-game="'+name+'"] table input';
 		let inputs = Array.from(curGame.querySelectorAll(selector));
 		for (let input of inputs) {
-			input.addEventListener('input', function(event) { calcScore(name) });
+			input.addEventListener('change', function(event) { calcScore(name) });
 		}
 	}
 
@@ -486,7 +486,7 @@ function startNewGame(): void {
 	let inputs = newNode.getElementsByClassName("player-name");
 	for (let i = 0; i < inputs.length; i++) {
 		let input = inputs[i];
-		input.addEventListener('input', function(event) {
+		input.addEventListener('change', function(event) {
 			let curinput = <HTMLInputElement>(event.target);
 			let j = parseInt(curinput.dataset.player) - 1;
 			players[j] = curinput.value;
