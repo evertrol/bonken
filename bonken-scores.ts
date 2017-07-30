@@ -281,6 +281,7 @@ function startMiniGame(name) {
 		inMiniGame = false;
 		nGames += 1;
 		updateScoreCard(name);
+		gamesPlayed[iplayer].push(name);
 		if (nGames < 12) {
 			nextMiniGame(name);
 		} else {
@@ -383,7 +384,6 @@ function updateScoreCard(name) {
 
 
 function nextMiniGame(oldName: string, cancelled?: boolean) {
-	gamesPlayed[iplayer].push(oldName);
 	curGame.querySelector('[data-id="mini-game"]').setAttribute('class', 'hidden');
 	curGame.querySelector('section[data-id="results"]').setAttribute('class', 'hidden');
 	curGame.querySelector('section[data-game="'+oldName+'"]').setAttribute('class', 'hidden');
