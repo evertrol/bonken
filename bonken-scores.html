@@ -256,17 +256,23 @@ Select the mini-game to play by selecting the link in the table below.<br>
 
 </tbody>
 </table>
-
 </section>
 
-<section class="mini-game hidden" data-id="mini-game">
-<h1>Mini game</h1>
 
+<section class="mini-game hidden" data-id="mini-game" data-game="template">
+<h1>Mini game</h1>
 <input type="button" value="Cancel current game" name="cancel">
 
-<section class="bidding">
-<h1>Bidding</h1>
+<section class="results hidden" data-id="results">
+<h1>Fill out the results</h1>
 
+<input type="button" value="Done! Pick next game" data-id="next" disabled="disabled">
+</section>  <!-- results -->
+</section>  <!-- mini-game -->
+
+
+<section class="bidding hidden" data-game="template" data-id="bidding">
+<h1>Bidding</h1>
 
 <p><span class="shuffle-player">No one</span> has dealt the cards.<br>
 <span class="current-player">No one</span> has chosen.<br>
@@ -284,8 +290,6 @@ Select the mini-game to play by selecting the link in the table below.<br>
 
 </section>  <!-- bidding -->
 
-<section class="results hidden" data-id="results">
-<h1>Fill out the results</h1>
 
 <section class="hearts hidden" data-game="hearts">
 <h1>Fill out the number of hearts for each player</h1>
@@ -311,10 +315,10 @@ Select the mini-game to play by selecting the link in the table below.<br>
 <tr><th>Name</th><th>Number of kings &amp; jacks</th><th>Score</th></tr>
 </thead>
 <tbody>
-<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
-<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
-<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
-<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d" data-playerid="4"></td><td></td></tr>
 </tbody>
 </table>
 </section>
@@ -342,10 +346,10 @@ Select the mini-game to play by selecting the link in the table below.<br>
 <tr><th>Name</th><th>Number of queens</th><th>Score</th></tr>
 </thead>
 <tbody>
-<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="1"></td><td></td></tr>
-<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="2"></td><td></td></tr>
-<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="3"></td><td></td></tr>
-<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d{1,2}" data-playerid="4"></td><td></td></tr>
+<tr class="player1"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d" data-playerid="1"></td><td></td></tr>
+<tr class="player2"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d" data-playerid="2"></td><td></td></tr>
+<tr class="player3"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d" data-playerid="3"></td><td></td></tr>
+<tr class="player4"><th></th><td><input type="text" size="5" placeholder="0" inputmode="numeric" pattern="\d" data-playerid="4"></td><td></td></tr>
 </tbody>
 </table>
 </section>
@@ -494,11 +498,7 @@ Select the mini-game to play by selecting the link in the table below.<br>
 </table>
 </section>
 
-<input type="button" value="Done! Pick next game" data-id="next" disabled="disabled">
-
-</section> <!-- results >
 </section> <!-- play >
-</section> <!-- new-mini-game >
 </section> <!-- start-new-game >
 
 

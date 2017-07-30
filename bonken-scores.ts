@@ -1,5 +1,6 @@
 let gameName: string;
 let curGame: HTMLElement;
+let curMiniGame: HTMLElement;
 let players: string[] = ['Player 1', 'Player 2', 'Player 3', 'Player 4'];
 let iplayer: number = -1;
 let currentPlayerSpan: HTMLElement;
@@ -70,8 +71,9 @@ function updateScoreTableNames(players) {
 
 
 function updateScore(name, scores) {
-	let selector = 'section[data-game="' + name + '"] tbody tr';
-	let trs = curGame.querySelectorAll(selector);
+	let selector = 'section[data-id="results"] tbody tr';
+	let trs = curMiniGame.querySelectorAll(selector);
+	console.log(trs);
 	for (let i = 0; i < scores.length; i++) {
 		let td = <HTMLElement>trs[i].querySelector('td:last-child');
 		td.innerText = scores[i];
@@ -82,7 +84,7 @@ function updateScore(name, scores) {
 function calcBids() {
 	let bids = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
 
-	let inputs = curGame.querySelector('table[data-id="bidding"] tbody').
+	let inputs = curMiniGame.querySelector('table[data-id="bidding"] tbody').
 		getElementsByTagName('input');
 	for (let i = 0; i < inputs.length; i++) {
 		let input = inputs[i];
@@ -98,7 +100,7 @@ function calcGeneric(values, name) {
 	let bids = calcBids();
 	let mult = mults.get(name);
 	let scores = [0, 0, 0, 0];
-	//totalPoints.set(name, [0, 0, 0, 0]);
+
 	for (let i = 0; i < 4; i++) {
 		let points = 0;
 		let score = values[i];
@@ -114,15 +116,14 @@ function calcGeneric(values, name) {
 		}
 		points = mult * score;
 		scores[i] = points;
-		// totalPoints.get(name)[i] = points;
 	}
 	return scores;
 }
 
 
 function calcScore(name, showAlert=true) {
-	let selector = 'section[data-game="'+name+'"] table input';
-	let inputs = Array.from(curGame.querySelectorAll(selector));
+	let selector = 'section[data-id="results"] table input';
+	let inputs = Array.from(curMiniGame.querySelectorAll(selector));
 	let sum = 0;
 	let values = [0, 0, 0, 0];
 
@@ -149,14 +150,14 @@ function calcScore(name, showAlert=true) {
 		}
 	}
 
-	(<HTMLInputElement>curGame.querySelector('input[data-id="next"]')).disabled = true;
+	(<HTMLInputElement>curMiniGame.querySelector('input[data-id="next"]')).disabled = true;
 	updateScore(name, ['', '', '', '']);
 
 	if (sum == sums.get(name)) {
 		let scores = calcGeneric(values, name);
 		updateScore(name, scores);
 		totalPoints.set(name, scores);
-		(<HTMLInputElement>curGame.querySelector('input[data-id="next"]')).disabled = false;
+		(<HTMLInputElement>curMiniGame.querySelector('input[data-id="next"]')).disabled = false;
 	} else if (sum > sums.get(name)) {
 		if (showAlert) {
 			alert('too many tricks');
@@ -177,25 +178,29 @@ function doneBidding(tbody, name) {
 		}
 	}
 
-	let resultSection = curGame.querySelector('section[data-id="results"]');
+	let resultSection = curMiniGame.querySelector('section[data-id="results"]');
 	resultSection.setAttribute("class", "");
 
-	let section = <HTMLElement>curGame.querySelector('section[data-game="'+name+'"]');
+	let section = <HTMLElement>curMiniGame.querySelector('section[data-game="'+name+'"]');
 	section.scrollIntoView(true);
 
 }
 
 function updateBiddingTableNames(players) {
-	let table = curGame.querySelector('table[data-id="bidding"]');
-	let ths = table.querySelectorAll('thead tr:nth-child(2) th');
-	for (let i = 1; i < ths.length; i++) {
-		let th = <HTMLElement>ths[i];
-		th.innerText = players[(iplayer+i)%4];
-	}
-	ths = table.querySelectorAll('tbody tr th');
-	for (let i = 0; i < ths.length; i++) {
-		let th = <HTMLElement>ths[i];
-		th.innerText = players[(iplayer+i+1)%4];
+	let tables = curGame.querySelectorAll('table[data-id="bidding"]');
+	for (let j = 0; j < tables.length; j++) {
+		let table = tables[j];
+
+		let ths = table.querySelectorAll('thead tr:nth-child(2) th');
+		for (let i = 1; i < ths.length; i++) {
+			let th = <HTMLElement>ths[i];
+			th.innerText = players[(iplayer+i)%4];
+		}
+		ths = table.querySelectorAll('tbody tr th');
+		for (let i = 0; i < ths.length; i++) {
+			let th = <HTMLElement>ths[i];
+			th.innerText = players[(iplayer+i+1)%4];
+		}
 	}
 }
 
@@ -273,9 +278,11 @@ function addBiddingRow(name, tbody, j) {
 function startMiniGame(name) {
 	inMiniGame = true;
 
-	let cancel = <HTMLInputElement>curGame.querySelector('input[name="cancel"]');
+	setupMiniGame(name);
+
+	let cancel = <HTMLInputElement>curMiniGame.querySelector('input[name="cancel"]');
 	cancel.onclick = function() { cancelGame(name); };
-	let input = <HTMLInputElement>curGame.querySelector('input[data-id="next"]');
+	let input = <HTMLInputElement>curMiniGame.querySelector('input[data-id="next"]');
 	input.disabled = true;
 	input.onclick = function() {
 		inMiniGame = false;
@@ -294,6 +301,45 @@ function startMiniGame(name) {
 }
 
 
+function setupMiniGame(name) {
+	let miniGame = curGame.querySelector('section[data-id="mini-game"][data-game="template"]');
+	curMiniGame = <HTMLElement>miniGame.cloneNode(true);
+	curMiniGame.setAttribute('data-game', name);
+	curMiniGame.setAttribute('class', 'mini-game');
+	let results = curMiniGame.querySelector('section[data-id="results"]');
+
+	let bidding = curGame.querySelector('section[data-id="bidding"][data-game="template"]');
+	let newBidding = <HTMLElement>bidding.cloneNode(true);
+	newBidding.setAttribute('data-game', name);
+	newBidding.setAttribute('class', 'bidding');
+	curMiniGame.insertBefore(newBidding, results);
+	let gameResults = curGame.querySelector('section[data-game="' + name + '"]');
+	gameResults = gameResults.parentNode.removeChild(gameResults);
+	gameResults.setAttribute('class', name);
+	let doneButton = curMiniGame.querySelector('input[data-id="next"]');
+	doneButton.parentNode.insertBefore(gameResults, doneButton);
+
+	curMiniGame.getElementsByTagName('h1')[0].innerText = name.replace(/\-/g, ' ');
+
+	console.log(curMiniGame.parentNode)
+	miniGame.parentNode.appendChild(curMiniGame);
+	//curGame.querySelector('section[data-game="'+name+'"]').setAttribute('class', '');
+
+	let inputs = Array.from(gameResults.querySelectorAll('table input'));
+	for (let input of inputs) {
+		let inputType = input.getAttribute('type');
+		input.addEventListener('change', function(event) { calcScore(name) });
+		if (input.getAttribute('type') == 'text') {
+			// update score while typing; just don't show an alert
+			input.addEventListener('input', function(event) { calcScore(name, false) });
+		}
+	}
+
+	let header = <HTMLElement>curMiniGame.querySelector('section[data-id="mini-game"] h1');
+	header.scrollIntoView(true);
+}
+
+
 function startBidding(name) {
 	for (let i = 0; i < 4; i++) {
 		for (let j = 0; j < 4; j++) {
@@ -301,7 +347,8 @@ function startBidding(name) {
 		}
 	}
 
-	let table = <HTMLElement>curGame.querySelector('table[data-id="bidding"]');
+	let table = <HTMLElement>curMiniGame.querySelector(
+		`section[data-game="${name}"] table[data-id="bidding"]`);
 	let head = <HTMLElement>table.getElementsByTagName('thead')[0];
 	var tr = document.createElement("tr");
 	var th = document.createElement("th");
@@ -383,17 +430,33 @@ function updateScoreCard(name) {
 }
 
 
-function nextMiniGame(oldName: string, cancelled?: boolean) {
-	curGame.querySelector('[data-id="mini-game"]').setAttribute('class', 'hidden');
-	curGame.querySelector('section[data-id="results"]').setAttribute('class', 'hidden');
-	curGame.querySelector('section[data-game="'+oldName+'"]').setAttribute('class', 'hidden');
+function disableCurMiniGame() {
+	curMiniGame.querySelector('input[name="cancel"]').remove();
+	curMiniGame.style.opacity = '0.5';
+	let inputs = curMiniGame.querySelectorAll('input');
+	console.log('inputs:', inputs);
+	for (let i = 0; i < inputs.length; i++) {
+		inputs[i].disabled = true;
+	}
+}
 
+
+function nextMiniGame(oldName: string, cancelled?: boolean) {
+	//curMiniGame.querySelector('[data-id="mini-game"]').setAttribute('class', 'hidden');
+	//curMiniGame.querySelector('section[data-id="results"]').setAttribute('class', 'hidden');
+	//curMiniGame.querySelector('section[data-game="'+oldName+'"]').setAttribute('class', 'hidden');
+/*
 	let table = <HTMLTableElement>curGame.querySelector('table[data-id="bidding"]');
 	while (table.rows.length > 0) {
 		table.deleteRow(0);
 	}
+*/
 
-	if (!cancelled) {
+	if (cancelled) {
+		curMiniGame.remove();
+	} else {
+		disableCurMiniGame();
+
 		iplayer += 1;
 		iplayer %= 4;
 	}
@@ -481,26 +544,8 @@ function setMiniGameLinks() {
 			if (testTrumpPlayed(name)) {
 				return false;
 			}
-			let section = <HTMLElement>curGame.querySelector('[data-id="mini-game"]');
-			section.setAttribute('class', '');
-			section.getElementsByTagName('h1')[0].innerText = name.replace(/\-/g, ' ');
-			curGame.querySelector('section[data-game="'+name+'"]').setAttribute('class', '');
-			let header = <HTMLElement>curGame.querySelector('section[data-id="mini-game"] h1');
-			header.scrollIntoView(true);
-
 			startMiniGame(name);
 			return false;
-		}
-
-		selector = 'section[data-game="'+name+'"] table input';
-		let inputs = Array.from(curGame.querySelectorAll(selector));
-		for (let input of inputs) {
-			let inputType = input.getAttribute('type');
-			input.addEventListener('change', function(event) { calcScore(name) });
-			if (input.getAttribute('type') == 'text') {
-				// update score while typing; just don't show an alert
-				input.addEventListener('input', function(event) { calcScore(name, false) });
-			}
 		}
 	}
 
