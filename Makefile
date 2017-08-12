@@ -3,5 +3,5 @@
 #	$(JSSOURCES) $(CSSSOURCES)
 
 all: bonken-scores.html bonken-scores.ts bonken-scores.css
-	tsc -t ES6 bonken-scores
+	tsc -t ES2016 bonken-scores
 	inliner bonken-scores.html > bonken-scores.min.html
