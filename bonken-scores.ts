@@ -73,7 +73,6 @@ function updateScoreTableNames(players) {
 function updateScore(name, scores) {
 	let selector = 'section[data-id="results"] tbody tr';
 	let trs = curMiniGame.querySelectorAll(selector);
-	console.log(trs);
 	for (let i = 0; i < scores.length; i++) {
 		let td = <HTMLElement>trs[i].querySelector('td:last-child');
 		td.innerText = scores[i];
@@ -321,7 +320,6 @@ function setupMiniGame(name) {
 
 	curMiniGame.getElementsByTagName('h1')[0].innerText = name.replace(/\-/g, ' ');
 
-	console.log(curMiniGame.parentNode)
 	miniGame.parentNode.appendChild(curMiniGame);
 	//curGame.querySelector('section[data-game="'+name+'"]').setAttribute('class', '');
 
@@ -439,7 +437,6 @@ function disableCurMiniGame() {
 	curMiniGame.querySelector('input[name="cancel"]').remove();
 	curMiniGame.style.opacity = '0.5';
 	let inputs = curMiniGame.querySelectorAll('input');
-	console.log('inputs:', inputs);
 	for (let i = 0; i < inputs.length; i++) {
 		inputs[i].disabled = true;
 	}
