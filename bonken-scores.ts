@@ -293,7 +293,7 @@ function startMiniGame(name) {
 			nextMiniGame(name);
 		} else {
 			nextMiniGame(name);
-			finishGame();
+			finishGame(gameName);
 		}
 	}
 
@@ -375,7 +375,7 @@ function resetBiddingTable(name) {
 }
 
 
-function finishGame() {
+function finishGame(name) {
 	// Disable the last link
 	let selector = 'table[data-id="score-card"] tr th a';
 	let links = curGame.querySelectorAll(selector);
@@ -384,6 +384,11 @@ function finishGame() {
 		let text = link.innerText;
 		link.parentElement.innerText = text;
 	}
+
+	let section = <HTMLElement>document.getElementById("saved-games");
+	let list = section.querySelector('ul');
+	let item = <HTMLElement>list.querySelector('li[data-name="' + name + '"]');
+	item.childNodes[1].textContent = " (finished)";
 }
 
 
@@ -596,21 +601,38 @@ function checkStartingPlayer() {
 }
 
 
-function startNewGame(): void {
-    let elem = <HTMLInputElement>document.getElementById("game-name");
-    gameName = elem.value;
- 	if (gameName == "") {
-	    gameName = getDateTime();
+function updateSavedGames(name: string, curGame) {
+	let section = <HTMLElement>document.getElementById("saved-games");
+	let list = section.querySelector('ul');
+	let games = list.querySelectorAll('li');
+	let igame = -1;
+	for (let i = 0; i < games.length; i++) {
+		let game = games[i];
+		let text = game.querySelector('a').innerText;
+		if (text == name) {
+			igame = i;
+			break;
+		}
 	}
-	gameName = "game-" + gameName;
+	if (igame == -1) {
+		let item = document.createElement('li');
+		let link = document.createElement('a');
+		link.setAttribute('href', '#');
+		link.setAttribute('onclick', 'continueGame("' + name + '"); return false;');
+		link.innerText = name;
+		item.appendChild(link);
+		item.appendChild(document.createTextNode(" (active)"));
+		item.dataset.iplayer = String(iplayer);
+		item.dataset.name = name;
+		list.appendChild(item);
+	} else {
+		let item = games[igame];
+		item.dataset.iplayer = String(iplayer);
+	}
+}
 
-	let node = document.getElementById("start-new-game");
-	curGame = <HTMLElement>(node.cloneNode(true));
-	let newNode = curGame;
-	newNode.id = gameName;
-	newNode.setAttribute("class", "");
-	document.body.appendChild(newNode);
 
+function createPlayerTable(curGame, newNode) {
 	let checkboxes = curGame.getElementsByClassName("starting-player");
 	for (let i = 0; i < checkboxes.length; i++) {
 		let checkbox = <HTMLInputElement>checkboxes[i];
@@ -622,6 +644,69 @@ function startNewGame(): void {
 
 	let input = <HTMLElement>newNode.getElementsByClassName("player-name")[0];
 	input.focus();
+}
+
+
+function continueGame(name): void {
+	// hide the current game if it exists
+	if (typeof curGame != 'undefined') {
+		curGame.setAttribute('class', 'hidden');
+	}
+
+	// reset to active if not finished
+	let section = <HTMLElement>document.getElementById("saved-games");
+	let list = section.querySelector('ul');
+	let item = <HTMLElement>list.querySelector('li[data-name="' + gameName + '"]');
+	if (item.childNodes[1].textContent != " (finished)") {
+		item.childNodes[1].textContent = " (active)";
+	}
+
+	// set new game to current unless finished
+	item = <HTMLElement>list.querySelector('li[data-name="' + name + '"]');
+	if (item.childNodes[1].textContent != " (finished)") {
+		item.childNodes[1].textContent = " (current)";
+	}
+
+	// grab the relevant game data
+	iplayer = parseInt(item.dataset.iplayer);
+
+	// show the game
+	curGame = document.getElementById(name);
+	curGame.setAttribute('class', '');
+
+	gameName = name;
+
+	section = <HTMLElement>document.getElementById("saved-games");
+	list = section.querySelector('ul');
+	item = <HTMLElement>list.querySelector('li[data-name="' + name + '"]');
+}
+
+
+function startNewGame(): void {
+	if (typeof curGame != 'undefined') {
+		curGame.setAttribute('class', 'hidden');
+	}
+
+    let elem = <HTMLInputElement>document.getElementById("game-name");
+    gameName = elem.value;
+ 	if (gameName == "") {
+	    gameName = getDateTime();
+	}
+	gameName = "Game " + gameName;
+
+	let node = document.getElementById("start-new-game");
+	curGame = <HTMLElement>(node.cloneNode(true));
+	let newNode = curGame;
+	newNode.id = gameName;
+	newNode.setAttribute("class", "");
+	let header = newNode.querySelector('h1');
+	header.innerText = gameName;
+
+	document.body.appendChild(newNode);
+
+	updateSavedGames(gameName, curGame);
+
+	createPlayerTable(curGame, newNode);
 }
 
 
@@ -683,7 +768,7 @@ function play(): void {
 	updateScoringTableHeader(players)
 
 	section.setAttribute("class", "");
-	let header = section.querySelector('h1');
+	let header = section.querySelector('h1[data-id="score-card"]');
 	header.scrollIntoView(true);
 
 	(<HTMLInputElement>curGame.querySelector('[data-id="play"]')).disabled = true;
@@ -700,9 +785,9 @@ function getDateTime(): string {
 	let day: number = curdate.getDate();
 	return (curdate.getFullYear() + "-" +
             (month < 10 ? "0" + String(month) : String(month)) + "-" +
-            (day < 10 ? "0" + String(day) : String(day)) + "T" +
+            (day < 10 ? "0" + String(day) : String(day)) + " " +
             curdate.getHours() + ":" +
-            curdate.getMinutes());
+            curdate.getMinutes() + ":" + curdate.getSeconds());
 }
 
 
