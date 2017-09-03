@@ -313,7 +313,7 @@ function setupMiniGame(name) {
 	newBidding.setAttribute('class', 'bidding');
 	curMiniGame.insertBefore(newBidding, results);
 	let gameResults = curGame.querySelector('section[data-game="' + name + '"]');
-	gameResults = gameResults.parentNode.removeChild(gameResults);
+	gameResults = <HTMLElement>gameResults.cloneNode(true);
 	gameResults.setAttribute('class', name);
 	let doneButton = curMiniGame.querySelector('input[data-id="next"]');
 	doneButton.parentNode.insertBefore(gameResults, doneButton);
@@ -321,7 +321,6 @@ function setupMiniGame(name) {
 	curMiniGame.getElementsByTagName('h1')[0].innerText = name.replace(/\-/g, ' ');
 
 	miniGame.parentNode.appendChild(curMiniGame);
-	//curGame.querySelector('section[data-game="'+name+'"]').setAttribute('class', '');
 
 	let inputs = Array.from(gameResults.querySelectorAll('table input'));
 	for (let input of inputs) {
@@ -496,12 +495,6 @@ function setPlayerOrder(players) {
 
 
 function cancelGame(name) {
-	/*
-	let result = confirm("Cancel the current game?", ['yes', 'no']);
-	if (result == 0) {
-
-	}
-	*/
 	let result = window.confirm("Stop the current game?");
 	if (result) {
 		inMiniGame = false;
