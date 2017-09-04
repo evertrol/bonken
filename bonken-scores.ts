@@ -9,6 +9,7 @@ let biddingPlayerSpan: HTMLElement;
 let nGames = 0;
 let inMiniGame = false;
 let gamesPlayed: number[][] = [[0,0], [0,0], [0,0], [0,0]];
+let nMinusGames = 0;
 
 
 let bids: number[][] = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
@@ -281,6 +282,23 @@ function addBiddingRow(name, tbody, j) {
 }
 
 
+function testSkipPlayer() {
+	if (nMinusGames < 8 || nGames === 12) {
+		return ;
+	}
+	while (gamesPlayed[iplayer][1] > 0) {
+		let newPar = document.createElement('p');
+		newPar.setAttribute('style', 'color: red;');
+		newPar.className = "notice";
+		newPar.innerText = (players[iplayer] + " has already played a plus game, " +
+							"and no minus game available. Skipping " + players[iplayer] + ".");
+		let par = curGame.querySelector('p[data-id="score-card"]');
+		par.parentNode.insertBefore(newPar, par);
+		iplayer += 1;
+		iplayer %= 4;
+	}
+}
+
 function startMiniGame(name) {
 	inMiniGame = true;
 
@@ -292,11 +310,16 @@ function startMiniGame(name) {
 	input.disabled = true;
 	input.onclick = function() {
 		inMiniGame = false;
+		let notices = curGame.querySelectorAll('section[data-id="score-card"] p.notice');
+		for (let i = 0; i < notices.length; i++) {
+			notices[i].remove();
+		}
 		nGames += 1;
 		updateScoreCard(name);
 		if (name.includes('trump')) {
 			gamesPlayed[iplayer][1] += 1;
 		} else {
+			nMinusGames += 1;
 			gamesPlayed[iplayer][0] += 1;
 		}
 		if (nGames < 12) {
@@ -472,6 +495,7 @@ function nextMiniGame(oldName: string, cancelled?: boolean) {
 
 		iplayer += 1;
 		iplayer %= 4;
+		testSkipPlayer();
 	}
 
 	setPlayerOrder(players, curGame.querySelector('section[data-id="score-card"]'));
