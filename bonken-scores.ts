@@ -8,7 +8,7 @@ let biddingPlayerSpan: HTMLElement;
 //let miniGame: string = "";
 let nGames = 0;
 let inMiniGame = false;
-let gamesPlayed: string[][] = [[], [], [], []];
+let gamesPlayed: number[][] = [[0,0], [0,0], [0,0], [0,0]];
 
 
 let bids: number[][] = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
@@ -287,7 +287,11 @@ function startMiniGame(name) {
 		inMiniGame = false;
 		nGames += 1;
 		updateScoreCard(name);
-		gamesPlayed[iplayer].push(name);
+		if (name.includes('trump')) {
+			gamesPlayed[iplayer][1] += 1;
+		} else {
+			gamesPlayed[iplayer][0] += 1;
+		}
 		if (nGames < 12) {
 			nextMiniGame(name);
 		} else {
@@ -504,28 +508,15 @@ function cancelGame(name) {
 
 
 function testTrumpPlayed(name) {
-	let names = ['trump-spades', 'trump-hearts', 'trump-diamonds', 'trump-clubs', 'no-trump'];
-	let played = gamesPlayed[iplayer];
-	if (!names.includes(name)) {
-		if (played.length >= 2) {
-			for (let trumpname of names) {
-				if (played.includes(trumpname)) {
-					return false;
-				}
-			}
-			alert(players[iplayer] + " has to play a plus game")
+	if (name.includes('trump')) {
+		if (gamesPlayed[iplayer][1] > 0) {
+			alert(players[iplayer] + ' has already played a plus game');
 			return true;
-		}
-	} else {
-		for (let trumpname of names) {
-			if (played.includes(trumpname)) {
-				alert(players[iplayer] + ' has already played a plus game');
-				return true;
-			}
 		}
 	}
 	return false;
 }
+
 
 function setMiniGameLinks() {
 	let table = curGame.querySelector('table[data-id="score-card"]');
