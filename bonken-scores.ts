@@ -52,10 +52,17 @@ function updatePlayerName(input) {
 	if (players[i] == '') {
 		players[i] = 'Player ' + (i+1);
 	}
-	setPlayerOrder(players);
 	updateScoringTableNames(players);
 	updateBiddingTableNames(players);
 	updateScoreTableNames(players);
+
+	let spans = curGame.querySelectorAll('span.player-' + (i+1));
+	console.log(spans);
+	for (let j = 1; j < spans.length; j++) {
+		let span = <HTMLElement>spans[j];
+		span.innerText = players[i];
+	}
+	setPlayerOrder(players, curGame.querySelector('section[data-id="score-card"]'));
 }
 
 
@@ -335,6 +342,7 @@ function setupMiniGame(name) {
 			input.addEventListener('input', function(event) { calcScore(name, false) });
 		}
 	}
+	setPlayerOrder(players, curMiniGame.querySelector('section[data-id="bidding"]'));
 
 	let header = <HTMLElement>curMiniGame.querySelector('section[data-id="mini-game"] h1');
 	header.scrollIntoView(true);
@@ -466,33 +474,45 @@ function nextMiniGame(oldName: string, cancelled?: boolean) {
 		iplayer %= 4;
 	}
 
-	setPlayerOrder(players);
-
+	setPlayerOrder(players, curGame.querySelector('section[data-id="score-card"]'));
 	let header = curGame.querySelector('h1[data-id="score-card"]');
 	header.scrollIntoView(true);
 }
 
 
-function setPlayerOrder(players) {
-	let spans = curGame.querySelectorAll('span');
+function setPlayerOrder(players, element) {
+	let spans = element.querySelectorAll('span');
+	console.log(element, spans);
 	for (let i = 0; i < spans.length; i++) {
 		let span = spans[i];
-		let cls = span.getAttribute("class");
-		if (cls == "current-player") {
+		let cls = span.className;
+		if (cls.includes("current-player")) {
 			span.innerText = players[iplayer];
+			if (!cls.includes('player-')) {
+				span.className += ' player-' + (iplayer+1);
+			}
 		}
-		if (cls == "bidding-player") {
+		if (cls.includes("bidding-player")) {
 			span.innerText = players[(iplayer+1)%4];
+			if (!cls.includes('player-')) {
+				span.className += ' player-' + ((iplayer+1)%4+1);
+			}
 		}
-		if (cls == "shuffle-player") {
+		if (cls.includes("shuffle-player")) {
 			if (nGames == 0) {
 				span.innerText = "Someone";
 			} else {
 				span.innerText = players[(iplayer+2)%4];
 			}
+			if (!cls.includes('player-')) {
+				span.className += ' player-' + ((iplayer+2)%4+1);
+			}
 		}
-		if (cls == "leading-player") {
+		if (cls.includes("leading-player")) {
 			span.innerText = players[(iplayer+3)%4];
+			if (!cls.includes('player-')) {
+				span.className += ' player-' + ((iplayer+3)%4+1);
+			}
 		}
 	}
 }
@@ -733,7 +753,7 @@ function play(): void {
 		return ;
 	}
 	if (checked.length > 1) {
-		alert("To many starting players selected");
+		alert("Too many starting players selected");
 		let input = <HTMLElement>curGame.getElementsByClassName("player-name")[0];
 		input.focus();
 		return ;
@@ -745,7 +765,7 @@ function play(): void {
 	let elem = node.querySelector('[value="Play!"]');
 	let section = elem.nextElementSibling;
 
-	setPlayerOrder(players);
+	setPlayerOrder(players, curGame.querySelector('section[data-id="score-card"]'));
 	updateScoringTableHeader(players)
 
 	section.setAttribute("class", "");
